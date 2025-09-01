@@ -1,30 +1,34 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
+import { ConfigModule, ConfigService, ConfigType } from '@nestjs/config';
 
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
+import databaseConfig from './config/database.config';
+
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env', cache: true }),
-    ThrottlerModule.forRoot([
-      {
-        ttl: 60, // Time window in seconds
-        limit: parseInt(process.env.RATE_LIMIT ?? '10', 10), // Requests per IP per window
-      },
-    ]),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env', cache: true, load: [databaseConfig] }),
+    ThrottlerModule.forRoot([{ ttl: 60, limit: parseInt(process.env.RATE_LIMIT ?? '10', 10) }]),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService): MongooseModuleOptions => {
-        const user = configService.get<string>('DB_USER');
-        const pass = configService.get<string>('DB_PASS');
-        const cluster = configService.get<string>('DB_CLUSTER');
-        const dbName = configService.get<string>('DB_NAME');
+      useFactory: (configService: ConfigService) => {
+        const logger = new Logger('Mongoose');
+        const dbConfig = configService.get<ConfigType<typeof databaseConfig>>('database')!;
+
         return {
-          uri: `mongodb+srv://${user}:${pass}@${cluster}/${dbName}?retryWrites=true&w=majority`,
-          dbName: dbName,
+          uri: dbConfig.uri, dbName: dbConfig.name, user: dbConfig.user, pass: dbConfig.password,
+          connectionFactory: (connection) => {
+            if (connection.readyState === 1) logger.log('✅ MongoDB disconnected');
+
+            // Attached listeners
+            connection.on('error', (err) => logger.error('❌ MongoDB connection error:', err));
+            connection.on('disconnected', () => logger.warn('⚠️ MongoDB disconnected'));
+
+            return connection;
+          },
         };
       },
     }),
@@ -33,4 +37,4 @@ import { AppController } from './app.controller';
   providers: [AppService],
 })
 
-export class AppModule {};
+export class AppModule {}
