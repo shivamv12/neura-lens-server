@@ -6,13 +6,14 @@ import { ConfigModule, ConfigService, ConfigType } from '@nestjs/config';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import databaseConfig from './config/database.config';
+import { FileUploaderModule } from './modules/file-uploader/file-uploader.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env', cache: true, load: [databaseConfig] }),
     ThrottlerModule.forRoot([{ ttl: 60, limit: parseInt(process.env.RATE_LIMIT ?? '10', 10) }]),
     MongooseModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [ConfigModule, FileUploaderModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         const logger = new Logger('Mongoose');

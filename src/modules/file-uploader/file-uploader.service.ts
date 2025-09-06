@@ -3,10 +3,12 @@ import { ConfigService, ConfigType } from '@nestjs/config';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { S3Client, PutObjectCommand, PutObjectCommandInput } from '@aws-sdk/client-s3';
 
-import storageConfig from '../../../config/s3-storage.config';
+import storageConfig from '../../config/s3-storage.config';
+import { ImageRecordsDto } from 'src/common/dto/pre-signed-url-dto';
+import { IImageRecords, ImageRecordsModel } from './file-uploader.schema';
 
 @Injectable()
-export class S3Service {
+export class FileUploaderService {
   private s3: S3Client;
   public bucketName: string;
 
@@ -36,5 +38,10 @@ export class S3Service {
     } catch (err) {
       throw new BadRequestException('Could not generate signed URL. Please try again later.');
     }
+  }
+
+  async createImageRecord(imageRecordsDto: ImageRecordsDto): Promise<IImageRecords> {
+    const image = new ImageRecordsModel(imageRecordsDto);
+    return image.save();
   }
 }
