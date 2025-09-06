@@ -2,7 +2,7 @@ import { Controller, Post, Body, Req } from '@nestjs/common';
 
 import { FileUploaderService } from './file-uploader.service';
 import { ApiResponse } from '../../common/interfaces/api-response.interface';
-import { ImageRecordsDto, PreSignedUrlDto } from 'src/common/dto/file-uploader.dto';
+import { ImageRecordsDto, PreSignedUrlDto } from '../../common/dto/file-uploader.dto';
 
 @Controller('file-uploader')
 export class FileUploaderController {

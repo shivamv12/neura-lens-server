@@ -4,7 +4,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { S3Client, PutObjectCommand, PutObjectCommandInput } from '@aws-sdk/client-s3';
 
 import storageConfig from '../../config/s3-storage.config';
-import { ImageRecordsDto } from 'src/common/dto/pre-signed-url-dto';
+import { ImageRecordsDto } from '../../common/dto/file-uploader.dto';
 import { IImageRecords, ImageRecordsModel } from './file-uploader.schema';
 
 @Injectable()
