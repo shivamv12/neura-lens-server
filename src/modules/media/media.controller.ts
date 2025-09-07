@@ -1,11 +1,11 @@
 import { Controller, Post, Body, Req } from '@nestjs/common';
 
-import { FileUploaderService } from './file-uploader.service';
+import { FileUploaderService } from './media.service';
 import { ApiResponse } from '../../common/interfaces/api-response.interface';
-import { ImageRecordsDto, PreSignedUrlDto } from '../../common/dto/file-uploader.dto';
+import { ImageRecordsDto, PreSignedUrlDto } from './media.dto';
 
-@Controller('file-uploader')
-export class FileUploaderController {
+@Controller('media')
+export class MediaController {
   constructor(private readonly fileUploaderService: FileUploaderService) {}
 
   @Post('/pre-signed-url')

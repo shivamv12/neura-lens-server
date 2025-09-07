@@ -4,11 +4,11 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { S3Client, PutObjectCommand, PutObjectCommandInput } from '@aws-sdk/client-s3';
 
 import storageConfig from '../../config/s3-storage.config';
-import { ImageRecordsDto } from '../../common/dto/file-uploader.dto';
-import { IImageRecords, ImageRecordsModel } from './file-uploader.schema';
+import { ImageRecordsDto } from './media.dto';
+import { IImageRecords, ImageRecordsModel } from './media.schema';
 
 @Injectable()
-export class FileUploaderService {
+export class MediaService {
   private s3: S3Client;
   public bucketName: string;
 
