@@ -1,6 +1,6 @@
 import { Schema, model, Document } from 'mongoose';
 
-export interface IImageRecords extends Document {
+export interface IMediaRecords extends Document {
   fileName: string;
   s3Url: string;
   contentType: string;
@@ -14,7 +14,7 @@ export interface IImageRecords extends Document {
   updatedAt: Date;
 }
 
-const ImageRecordsSchema = new Schema<IImageRecords>({
+const MediaRecordsSchema = new Schema<IMediaRecords>({
   fileName: { type: String, required: true },
   s3Url: { type: String, required: true },
   contentType: { type: String, required: true },
@@ -26,4 +26,4 @@ const ImageRecordsSchema = new Schema<IImageRecords>({
   deviceType: { type: String },
 }, { timestamps: true });
 
-export const ImageRecordsModel = model<IImageRecords>('ImageRecords', ImageRecordsSchema);
+export const MediaRecordsModel = model<IMediaRecords>('MediaRecords', MediaRecordsSchema);

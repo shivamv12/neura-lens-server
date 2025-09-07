@@ -1,11 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService, ConfigType } from '@nestjs/config';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { S3Client, PutObjectCommand, PutObjectCommandInput } from '@aws-sdk/client-s3';
 
+import { MediaRecordsDto } from './media.dto';
 import storageConfig from '../../config/s3-storage.config';
-import { ImageRecordsDto } from './media.dto';
-import { IImageRecords, ImageRecordsModel } from './media.schema';
+import { IMediaRecords, MediaRecordsModel } from './media.schema';
 
 @Injectable()
 export class MediaService {
@@ -40,8 +40,8 @@ export class MediaService {
     }
   }
 
-  async createImageRecord(imageRecordsDto: ImageRecordsDto): Promise<IImageRecords> {
-    const image = new ImageRecordsModel(imageRecordsDto);
+  async createMediaRecord(mediaRecordsDto: MediaRecordsDto): Promise<IMediaRecords> {
+    const image = new MediaRecordsModel(mediaRecordsDto);
     return image.save();
   }
 }

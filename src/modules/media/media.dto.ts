@@ -7,7 +7,7 @@ export class PreSignedUrlDto {
   contentType: string;
 }
 
-export class ImageRecordsDto {
+export class MediaRecordsDto {
   @IsString()
   fileName: string;
 
