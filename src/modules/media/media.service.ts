@@ -9,10 +9,10 @@ import { IMediaRecords, MediaRecordsModel } from './media.schema';
 
 @Injectable()
 export class MediaService {
-  private s3: S3Client;
+  private readonly s3: S3Client;
   public bucketName: string;
 
-  constructor(private configService: ConfigService) {
+  constructor(private readonly configService: ConfigService) {
     const cfg = this.configService.get<ConfigType<typeof storageConfig>>('storage')!;
     this.bucketName = cfg.bucketName!;
     this.s3 = new S3Client({
