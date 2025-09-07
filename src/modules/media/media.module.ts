@@ -11,4 +11,4 @@ import s3StorageConfig from '../../config/s3-storage.config';
   imports: [ConfigModule.forFeature(s3StorageConfig)],
 })
 
-export class MediaModule {}
+export class MediaModule { }

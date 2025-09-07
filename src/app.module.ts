@@ -38,4 +38,4 @@ import { MediaModule } from './modules/media/media.module';
   providers: [AppService],
 })
 
-export class AppModule {}
+export class AppModule { }

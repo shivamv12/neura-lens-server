@@ -1,10 +1,12 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ValidationPipe, Logger } from '@nestjs/common';
 import helmet from 'helmet';
+import { NestFactory } from '@nestjs/core';
 import * as compression from 'compression';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
+import { AppModule } from './app.module';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -36,10 +38,13 @@ async function bootstrap() {
   // Global prefix
   app.setGlobalPrefix('api');
 
+  // Global custom response interceptor
+  app.useGlobalInterceptors(new ResponseInterceptor());
+
   // Swagger setup
   const config = new DocumentBuilder()
     .setTitle('🧠 Neura Lens APIs')
-    .setDescription('API documentation for Neura-Lens backend server!')
+    .setDescription('API documentation for Neura Lens backend server!')
     .setVersion('1.0')
     .addBearerAuth() // Enable JWT auth in Swagger
     .build();

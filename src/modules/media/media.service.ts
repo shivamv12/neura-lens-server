@@ -1,6 +1,6 @@
+import { Injectable } from '@nestjs/common';
 import { ConfigService, ConfigType } from '@nestjs/config';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { BadRequestException, Injectable } from '@nestjs/common';
 import { S3Client, PutObjectCommand, PutObjectCommandInput } from '@aws-sdk/client-s3';
 
 import { MediaRecordsDto } from './media.dto';
@@ -25,19 +25,12 @@ export class MediaService {
     });
   }
 
-  async getPreSignedUrl(filename: string, contentType: string): Promise<string> {
-    const commandInput: PutObjectCommandInput = {
-      Key: filename,
-      Bucket: this.bucketName,
-      ContentType: contentType,
-    };
+  async getPreSignedUrl(payload: { filename: string, contentType: string }): Promise<string> {
+    const { filename, contentType } = payload;
+    const commandInput: PutObjectCommandInput = { Key: filename, Bucket: this.bucketName, ContentType: contentType };
 
     const command = new PutObjectCommand(commandInput);
-    try {
-      return await getSignedUrl(this.s3, command, { expiresIn: 60 * 2 }); // Valid for only 2 min
-    } catch (err) {
-      throw new BadRequestException('Could not generate signed URL. Please try again later.');
-    }
+    return await getSignedUrl(this.s3, command, { expiresIn: 60 * 2 }); // Valid for only 2 min
   }
 
   async createMediaRecord(mediaRecordsDto: MediaRecordsDto): Promise<IMediaRecords> {

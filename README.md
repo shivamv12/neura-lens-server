@@ -1,4 +1,4 @@
-# Neura-Lens Backend 🧠
+# Neura Lens Backend 🧠
 
 Fast, scalable, and secure NestJS backend powering **Neura Lens** – a platform that enables seamless image uploads, intelligent processing, and efficient retrieval.
 
