@@ -6,8 +6,8 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { S3Client, PutObjectCommand, PutObjectCommandInput } from '@aws-sdk/client-s3';
 
 import { MediaRecordsDto } from './media.dto';
-import storageConfig from '../../config/s3-storage.config';
 import { AIDetectionService } from './ai-detection.service';
+import s3StorageConfig from '../../config/s3-storage.config';
 import { IMediaRecords, MediaRecords, ProcessingStatus } from './media.schema';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class MediaService {
     private readonly configService: ConfigService,
     @InjectModel(MediaRecords.name) private readonly mediaModel: Model<IMediaRecords>,
   ) {
-    const cfg = this.configService.get<ConfigType<typeof storageConfig>>('s3-bucket-storage')!;
+    const cfg = this.configService.get<ConfigType<typeof s3StorageConfig>>('s3-bucket-storage')!;
     this.bucketName = cfg.bucketName!;
   }
 
