@@ -7,28 +7,21 @@ import { S3Client, PutObjectCommand, PutObjectCommandInput } from '@aws-sdk/clie
 
 import { MediaRecordsDto } from './media.dto';
 import storageConfig from '../../config/s3-storage.config';
-import { IMediaRecords, MediaRecords } from './media.schema';
+import { AIDetectionService } from './ai-detection.service';
+import { IMediaRecords, MediaRecords, ProcessingStatus } from './media.schema';
 
 @Injectable()
 export class MediaService {
-  private readonly s3: S3Client;
-  public bucketName: string;
+  private bucketName: string;
 
   constructor(
-    @InjectModel(MediaRecords.name)
-    private readonly mediaModel: Model<IMediaRecords>,
+    private readonly s3: S3Client,
+    private readonly ADS: AIDetectionService,
     private readonly configService: ConfigService,
+    @InjectModel(MediaRecords.name) private readonly mediaModel: Model<IMediaRecords>,
   ) {
-    const cfg = this.configService.get<ConfigType<typeof storageConfig>>('storage')!;
+    const cfg = this.configService.get<ConfigType<typeof storageConfig>>('s3-bucket-storage')!;
     this.bucketName = cfg.bucketName!;
-    this.s3 = new S3Client({
-      region: cfg.region,
-      credentials: {
-        accessKeyId: cfg.accessKeyId!,
-        secretAccessKey: cfg.secretAccessKey!,
-      },
-      endpoint: cfg.endpoint,
-    });
   }
 
   async getPreSignedUrl(payload: { filename: string, contentType: string }): Promise<string> {
@@ -40,6 +33,17 @@ export class MediaService {
   }
 
   async createMediaRecord(mediaRecordsDto: MediaRecordsDto): Promise<IMediaRecords> {
-    return await this.mediaModel.create(mediaRecordsDto);
+    const record = await this.mediaModel.create(mediaRecordsDto);
+
+    try {
+      const detectionResponse = await this.ADS.detectImageFromUrl(record.s3Key);
+      record.processedImageDetails = detectionResponse;
+      record.processingStatus = ProcessingStatus.SUCCESS;
+    } catch(err) {
+      record.processedImageDetails = {};
+      record.processingStatus = ProcessingStatus.FAILED;
+    }
+
+    return await record.save();
   }
 }
