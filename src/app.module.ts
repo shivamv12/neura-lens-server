@@ -22,7 +22,7 @@ import { MediaModule } from './modules/media/media.module';
         return {
           uri: dbConfig.uri, dbName: dbConfig.name, user: dbConfig.user, pass: dbConfig.password,
           connectionFactory: (connection) => {
-            if (connection.readyState === 1) logger.log('✅ MongoDB disconnected');
+            if (connection.readyState === 1) logger.log('✅ MongoDB connected.');
 
             // Attached listeners
             connection.on('error', (err) => logger.error('❌ MongoDB connection error:', err));

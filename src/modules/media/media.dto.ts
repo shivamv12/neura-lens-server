@@ -9,13 +9,10 @@ export class PreSignedUrlDto {
 
 export class MediaRecordsDto {
   @IsString()
-  fileName: string;
+  filename: string;
 
   @IsString()
-  s3Url: string;
-
-  @IsString()
-  contentType: string;
+  s3Key: string;
 
   @IsNumber()
   @IsOptional()

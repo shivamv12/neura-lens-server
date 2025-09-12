@@ -1,29 +1,33 @@
-import { Schema, model, Document } from 'mongoose';
+import { Document } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-export interface IMediaRecords extends Document {
-  fileName: string;
-  s3Url: string;
-  contentType: string;
+@Schema({ timestamps: true })
+export class MediaRecords extends Document {
+  @Prop({ required: true })
+  filename: string;
+
+  @Prop({ required: true })
+  s3Key: string;
+
+  @Prop()
   size?: number;
+
+  @Prop()
   width?: number;
+
+  @Prop()
   height?: number;
+
+  @Prop()
   deviceId?: string;
+
+  @Prop()
   userIp?: string;
+
+  @Prop()
   deviceType?: string;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
-const MediaRecordsSchema = new Schema<IMediaRecords>({
-  fileName: { type: String, required: true },
-  s3Url: { type: String, required: true },
-  contentType: { type: String, required: true },
-  size: { type: Number },
-  width: { type: Number },
-  height: { type: Number },
-  deviceId: { type: String },
-  userIp: { type: String },
-  deviceType: { type: String },
-}, { timestamps: true });
+export const MediaRecordsSchema = SchemaFactory.createForClass(MediaRecords);
 
-export const MediaRecordsModel = model<IMediaRecords>('MediaRecords', MediaRecordsSchema);
+export type IMediaRecords = MediaRecords;
