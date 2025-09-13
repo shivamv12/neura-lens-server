@@ -43,8 +43,8 @@ async function bootstrap() {
 
   // Swagger setup
   const config = new DocumentBuilder()
-    .setTitle('🧠 Neura Lens APIs')
-    .setDescription('API documentation for Neura Lens backend server!')
+    .setTitle('🧠 NeuraLens APIs')
+    .setDescription('API documentation for NeuraLens backend server!')
     .setVersion('1.0')
     .addBearerAuth() // Enable JWT auth in Swagger
     .build();

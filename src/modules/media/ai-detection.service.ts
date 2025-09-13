@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService, ConfigType } from '@nestjs/config';
 
 import s3StorageConfig from '../../config/s3-storage.config';
+import { MODEL_CONSTANTS } from 'src/constants/model-constants';
 
 @Injectable()
 export class AIDetectionService {
@@ -16,9 +17,9 @@ export class AIDetectionService {
     this.cloudFrontBaseUrl = cfg.cloudFrontBaseUrl!;
   }
 
-  async detectImageFromUrl(filename: string, prompt = 'What is in this image?') {
+  async detectImageFromUrl(filename: string, prompt = MODEL_CONSTANTS.IMAGE_ANALYSIS_PROMPT): Promise<any> {
     const completion = await this.openai.chat.completions.create({
-      model: 'meta-llama/llama-4-maverick:free',
+      model: MODEL_CONSTANTS.MODEL_NAME,
       messages: [
         {
           role: 'user',

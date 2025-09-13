@@ -17,7 +17,7 @@ export class AppService {
     const mem = process.memoryUsage();
 
     return {
-      message: '🧠 Neura Lens Backend Server is up and running!',
+      message: '🧠 NeuraLens Backend Server is up and running!',
       timestamp: new Date().toISOString(),
       uptime: formatUptime(process.uptime()),
       pid: process.pid,
