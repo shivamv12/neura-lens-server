@@ -14,7 +14,15 @@
  * - Stop Condition: When the AI should stop analyzing (overview only, no in-depth analysis).
  * - Output: The desired structured response format (overview, key objects/entities, additional context).
  * 
- * This format ensures consistent, safe, and structured outputs from any openAi models, including LLaMA 4 Maverick.
+ * Security Note:
+ * If explicit or objectionable content is detected, the AI must return ONLY:
+ *   {
+ *     "overview": "",
+ *     "objects": [],
+ *     "context": "",
+ *     "explicitContent": true
+ *   }
+ * i.e., no other keys should have meaningful values when explicitContent = true.
  */
 export const MODEL_CONSTANTS = {
   MODEL_NAME: "meta-llama/llama-4-maverick:free",
@@ -28,8 +36,16 @@ export const MODEL_CONSTANTS = {
 
     **Rules:** 
     - Never mention brand names or specific products (to avoid unintended promotion).
-    - Recognize any objectionable content (nudity, violence, or offensive entities),
-      If found, return a key in the output JSON as "explicitContent" with a value of true, else default to false.
+    - Recognize any objectionable content (nudity, violence, or offensive entities).
+    - If explicit/objectionable content is detected:
+        - Return only: 
+          {
+            "overview": "",
+            "objects": [],
+            "context": "",
+            "explicitContent": true
+          }
+        - Do NOT include or generate any descriptive information.
     - Avoid controversial content or situations in image processing.
     - Avoid speculation beyond what is reasonably visible in the image.
 
