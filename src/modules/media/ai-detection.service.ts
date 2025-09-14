@@ -18,7 +18,7 @@ export class AIDetectionService {
   }
 
   async detectImageFromUrl(filename: string, prompt = MODEL_CONSTANTS.IMAGE_ANALYSIS_PROMPT): Promise<any> {
-    const completion = await this.openai.chat.completions.create({
+    return await this.openai.chat.completions.create({
       model: MODEL_CONSTANTS.MODEL_NAME,
       messages: [
         {
@@ -30,7 +30,5 @@ export class AIDetectionService {
         },
       ],
     });
-
-    return completion.choices[0].message;
   }
 }

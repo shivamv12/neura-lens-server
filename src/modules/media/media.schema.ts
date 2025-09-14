@@ -30,7 +30,30 @@ export class MediaRecords extends Document {
   deviceType?: string;
   
   @Prop({ type: Object, default: {} })
-  processedImageDetails?: any;
+  processedImageDetails?: {
+    modelDetails: {
+      provider: string;
+      model: string;
+      object: string;
+      usage: {
+        prompt_tokens: number;
+        completion_tokens: number;
+        total_tokens: number;
+      }
+    },
+    miscDetails: {
+      role: string;
+      refusal: string;
+      reasoning: string;
+    },
+    content: {
+      overview: string;
+      objects: string[];
+      context: string;
+      explicitContent: boolean;
+    },
+    error?: string;
+  } | {};
 
   @Prop({ type: String, enum: ProcessingStatus, default: ProcessingStatus.PENDING })
   processingStatus?: ProcessingStatus;

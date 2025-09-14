@@ -9,6 +9,7 @@ import { MediaRecordsDto } from './media.dto';
 import { AIDetectionService } from './ai-detection.service';
 import s3StorageConfig from '../../config/s3-storage.config';
 import { IMediaRecords, MediaRecords, ProcessingStatus } from './media.schema';
+import { sanitizeAIResponse } from 'src/utils/common-methods';
 
 @Injectable()
 export class MediaService {
@@ -37,10 +38,27 @@ export class MediaService {
 
     try {
       const detectionResponse = await this.ADS.detectImageFromUrl(record.s3Key);
-      record.processedImageDetails = detectionResponse;
+
+      // Extracting choices-message, usage and model-details from `detectionResponse`
+      const { usage, provider, model, object, choices } = detectionResponse;
+      const { content, role, refusal, reasoning } = choices[0]?.message ?? {};
+      const miscDetails = { role, refusal, reasoning };
+      const modelDetails = { usage, provider, model, object };
+
+      let parsedContent: any = {};
+      if (content) {
+        // Sanitize AI response content
+        const sanitizedContent = sanitizeAIResponse(content);
+        try {
+          parsedContent = JSON.parse(sanitizedContent);
+        } catch (err) {
+          parsedContent = { overview: content }; // fallback: keep whole text as is
+        }
+      }
+      record.processedImageDetails = { modelDetails, miscDetails, content: parsedContent };
       record.processingStatus = ProcessingStatus.SUCCESS;
-    } catch(err) {
-      record.processedImageDetails = {};
+    } catch (err) {
+      record.processedImageDetails = { error: JSON.stringify(err) };
       record.processingStatus = ProcessingStatus.FAILED;
     }
 
