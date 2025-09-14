@@ -43,7 +43,12 @@ export class MediaService {
       const { usage, provider, model, object, choices } = detectionResponse;
       const { content, role, refusal, reasoning } = choices[0]?.message ?? {};
       const miscDetails = { role, refusal, reasoning };
-      const modelDetails = { usage, provider, model, object };
+      const modelDetails = {
+        usage: usage ?? {},
+        object: object ?? null,
+        model: model ?? "unknown",
+        provider: provider ?? "unknown",
+      };
 
       let parsedContent: any = {};
       if (content) {

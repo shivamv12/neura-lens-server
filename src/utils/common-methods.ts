@@ -31,7 +31,7 @@ export const sanitizeAIResponse = (content: string): string => {
   let cleaned = content.trim();
 
   if (cleaned.startsWith("```")) {
-    cleaned = cleaned.replace(/^```json\s*/i, "").replace(/```$/, "").trim();
+    cleaned = cleaned.replace(/^```(?:json)?\s*/i, "").replace(/```$/i, "").trim();
   }
 
   return cleaned;
