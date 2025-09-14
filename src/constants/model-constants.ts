@@ -28,7 +28,8 @@ export const MODEL_CONSTANTS = {
 
     **Rules:** 
     - Never mention brand names or specific products (to avoid unintended promotion).
-    - Never return any objectionable content (nudity, violence, or offensive entities).
+    - Recognize any objectionable content (nudity, violence, or offensive entities),
+      If found, return a key in the output JSON as "explicitContent" with a value of true, else default to false.
     - Avoid controversial content or situations in image processing.
     - Avoid speculation beyond what is reasonably visible in the image.
 
@@ -39,9 +40,11 @@ export const MODEL_CONSTANTS = {
       No in-depth or exhaustive analysis is required.
 
     **Output Format:** 
-    - 2-3 sentence overview of the scene.
-    - List of key objects/entities in the image (bullet points).
-    - Additional context (surroundings, mood, possible scenario, colors, or notable features).
+    - Provide response in JSON format with keys,
+      1. overview: string (2-3 sentence overview of the scene).
+      2. objects: array of strings (List of key objects/entities in the image).
+      3. context: string (surroundings, mood, possible scenario, colors, or notable features).
+      4. explicitContent: boolean (true if explicit content found, else false).
     - Keep the response concise, structured, and clear, without any unnecessary details, may be within 200 words maximum.
   `,
 };
