@@ -2,6 +2,7 @@ import { Types } from 'mongoose';
 import { Controller, Post, Body, Req, Get, Query } from '@nestjs/common';
 
 import { MediaService } from './media.service';
+import { ProcessingStatus } from './media.schema';
 import { MediaRecordsDto, PreSignedUrlDto } from './media.dto';
 
 /** Controller to handle media-related endpoints (uploads, presigned URLs, and completion). */
@@ -26,9 +27,14 @@ export class MediaController {
     if (!deviceId) return { files: [] };
 
     const uploads = await this.MSV.getUploadsByDevice(deviceId);
-    const files = uploads.map((item): { filename: string, uploadedAt: Date } => ({
-      filename: item.s3Key,
-      uploadedAt: item.createdAt
+    const files = uploads.map((item): {
+      cdnAccessLink: string,
+      status: ProcessingStatus | undefined,
+      uploadedAt: Date
+    } => ({
+      cdnAccessLink: item.s3Key,
+      uploadedAt: item.createdAt,
+      status: item.processingStatus,
     }));
 
     return { files };

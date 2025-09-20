@@ -14,6 +14,7 @@ import { IMediaRecords, MediaRecords, ProcessingStatus } from './media.schema';
 @Injectable()
 export class MediaService {
   private bucketName: string;
+  private cloudFrontBaseUrl: string;
 
   constructor(
     private readonly s3: S3Client,
@@ -23,6 +24,7 @@ export class MediaService {
   ) {
     const cfg = this.configService.get<ConfigType<typeof s3StorageConfig>>('s3-bucket-storage')!;
     this.bucketName = cfg.bucketName!;
+    this.cloudFrontBaseUrl = cfg.cloudFrontBaseUrl!;
   }
 
   /** Returns a pre-signed S3 URL for uploading a file valid for 2 minutes */
@@ -56,6 +58,8 @@ export class MediaService {
 
   /** Fetches all media uploads for a given device using projection */
   async getUploadsByDevice(deviceId: string): Promise<IMediaRecords[]> {
-    return await this.mediaRepository.find({ deviceId }, MediaProjections.uploadsList);
+    const uploadedFiles = await this.mediaRepository.find({ deviceId }, MediaProjections.uploadsList);
+    uploadedFiles.map((item): string => item.s3Key = `${this.cloudFrontBaseUrl}/${item.s3Key}`);
+    return uploadedFiles;
   }
 }
