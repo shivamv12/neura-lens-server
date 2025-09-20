@@ -57,6 +57,9 @@ export class MediaRecords extends Document {
 
   @Prop({ type: String, enum: ProcessingStatus, default: ProcessingStatus.PENDING })
   processingStatus?: ProcessingStatus;
+
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export const MediaRecordsSchema = SchemaFactory.createForClass(MediaRecords);

@@ -10,6 +10,7 @@ import openAiConfig from '../../config/open-ai.config';
 import { AIDetectionService } from './ai-detection.service';
 import s3StorageConfig from '../../config/s3-storage.config';
 import { MediaRecords, MediaRecordsSchema } from './media.schema';
+import { MediaRepository } from './media.repository';
 
 @Module({
   // imports → bring in other modules/configs/schemas this module depends on
@@ -27,6 +28,7 @@ import { MediaRecords, MediaRecordsSchema } from './media.schema';
   // providers → services/factories available for injection in this module
   providers: [
     MediaService,                                                           // business logic for media handling
+    MediaRepository,                                                        // repository for media records
     AIDetectionService,                                                     // service for AI detection logic
     {
       provide: S3Client,                                                    // custom factory to configure AWS S3 client
