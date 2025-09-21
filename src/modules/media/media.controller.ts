@@ -1,17 +1,22 @@
 import { Types } from 'mongoose';
 import { Controller, Post, Body, Req, Get, Query } from '@nestjs/common';
+import { ApiTags, ApiOkResponse, ApiQuery, ApiBody } from '@nestjs/swagger';
 
+import { ResponseDto } from './response.dto';
 import { MediaService } from './media.service';
 import { ProcessingStatus } from './media.schema';
 import { MediaRecordsDto, PreSignedUrlDto } from './media.dto';
 
 /** Controller to handle media-related endpoints (uploads, presigned URLs, and completion). */
+@ApiTags('media')
 @Controller('media')
 export class MediaController {
-  constructor(private readonly MSV: MediaService) { }
+  constructor(private readonly MSV: MediaService) {}
 
   // Returns a pre-signed S3 URL for uploading an image.
   @Post('/presigned-url')
+  @ApiBody({ type: PreSignedUrlDto })
+  @ApiOkResponse({ type: ResponseDto })
   async getPreSignedUrl(@Body() body: PreSignedUrlDto) {
     const { contentType } = body;
     const extension = contentType.split('/')[1];
@@ -23,14 +28,16 @@ export class MediaController {
 
   // Returns all uploaded media for a specific device with CDN/S3 URLs.
   @Get('/uploads')
+  @ApiQuery({ name: 'deviceId', required: false, description: 'Get uploaded media by device ID' })
+  @ApiOkResponse({ type: ResponseDto })
   async getMediaRecords(@Query('deviceId') deviceId?: string) {
     if (!deviceId) return { files: [] };
 
     const uploads = await this.MSV.getUploadsByDevice(deviceId);
     const files = uploads.map((item): {
-      cdnAccessLink: string,
-      status: ProcessingStatus | undefined,
-      uploadedAt: Date
+      cdnAccessLink: string;
+      status: ProcessingStatus | undefined;
+      uploadedAt: Date;
     } => ({
       cdnAccessLink: item.s3Key,
       uploadedAt: item.createdAt,
@@ -42,13 +49,15 @@ export class MediaController {
 
   // Marks an upload as complete and stores metadata in the database.
   @Post('/uploads/complete')
-  async createMediaRecord(@Body() body: MediaRecordsDto, @Req() req: Request): Promise<any> {
+  @ApiBody({ type: MediaRecordsDto })
+  @ApiOkResponse({ type: ResponseDto })
+  async createMediaRecord(@Body() body: MediaRecordsDto, @Req() req: Request) {
     const deviceId = body.deviceId?.toLowerCase();
     const deviceType = body.deviceType;
     const userIp =
       (req as any).ip ||
       (req.headers['x-forwarded-for'] as string | undefined) ||
-      (req as any).socket?.remoteAddress || undefined;
+      (req as any).socket?.remoteAddress;
 
     return this.MSV.createMediaRecord({ ...body, userIp, deviceId, deviceType });
   }
