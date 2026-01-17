@@ -18,7 +18,12 @@
 - [**AWS S3**](https://aws.amazon.com/s3/) – File storage  
 - [**AWS CloudFront**](https://aws.amazon.com/cloudfront/) – CDN for serving media  
 - [**LLaMA 4 Maverick**](https://ai.meta.com/llama/) – Free AI API for image analysis  
-- [**Docker**](https://www.docker.com/) – Containerization (optional)  
+- [**Docker**](https://www.docker.com/) – Containerization
+
+<br />
+<p>
+    <img src="https://skillicons.dev/icons?i=ts,nestjs,mongodb,aws,ai,docker" />
+</p>
 
 ## 🤖 How LLaMA Works (Behind the Scenes)
 
@@ -45,10 +50,9 @@ In NeuraLens, we leverage this to **analyze uploaded images** and provide **desc
 - **LLaMA (with CLIP embeddings)** is better for **semantic understanding** (explaining context, meaning, and relationships in an image).  
 - NeuraLens needs **descriptions and insights**, not just bounding boxes.  
 
-#### Think of it like:  
-- **YOLO 👀 (eyes) =** that instantly spots and labels objects.  
-- **LLaMA 🧠 (brain) =** that explains what those objects *mean*.  
-
+> #### Think of it like:  
+> **YOLO 👀 (eyes) =** that instantly spots and labels objects.  
+> **LLaMA 🧠 (brain) =** that explains what those objects *mean*.  
 
 ## ⚡ Getting Started
 
@@ -115,7 +119,9 @@ docker build -t neuralens-backend .
 docker run -p 3000:3000 --env-file .env neuralens-backend
 ```
 
-### 6. Expose with Ngrok (optional)  
+### 6. Expose with Ngrok (Optional)
+#### (Fixed endpoint approach recommended, if configuring)
+
 If you want to expose your local NestJS server to the internet (for mobile testing or external API access), you can use **Ngrok**:  
 
 #### Install ngrok globally (if not installed)
@@ -126,6 +132,46 @@ npm install -g ngrok
 ```bash
 ngrok http 3000
 ```
+
+But By default, running `ngrok http _port_` generates a new random public URL every time. To avoid this and use a fixed endpoint, you can configure Ngrok via the Ngrok Dashboard.
+
+This is especially useful for:
+
+- Mobile app development
+- Webhook integrations
+- Keeping a stable backend URL during development
+
+#### 1. Create an Ngrok Account
+
+Sign up or log in at 👉 https://dashboard.ngrok.com/
+
+#### 2. Authenticate Ngrok Locally
+
+Copy your Auth Token from the Ngrok dashboard and run:
+
+```bash
+ngrok config add-authtoken YOUR_NGROK_AUTH_TOKEN
+```
+This links your local machine to your Ngrok account.
+
+#### 3. Create a Fixed Endpoint (Domain)
+
+- Go to Ngrok Dashboard → Cloud Edge / Domains
+- Create a new Endpoint / Domain
+- Example generated path (free-tier compatible):
+```bash
+https://ngrok-free.app/_profile_string_/start-endpoint
+```
+> ⚠️ Even on the free plan, this endpoint **remains the same across restarts**, unlike random URLs.
+
+#### 4. Start Ngrok Using the Fixed Endpoint
+
+Run the endpoint directly from the CLI:
+```bash
+ngrok http --domain=ngrok-free.app 3000
+```
+
+> ℹ️ Your NestJS server on **localhost:3000** will now be exposed via a stable public URL.
 
 ## 🎯 Conclusion & Future Roadmap (Phase 2)
 
